@@ -3,7 +3,10 @@ const SECRET_PATTERNS = [
   /-----BEGIN [A-Z ]*PRIVATE KEY-----/u,
   /\b(?:OPENAI_API_KEY|YOUTUBE_REFRESH_TOKEN|YOUTUBE_CLIENT_SECRET)\b/u,
   /\/Users\/[^/\s]+/u,
+  /\/(?:home|root)\/[^/\s]+/u,
+  /\bfile:\/\//iu,
   /[A-Z]:\\Users\\[^\\\s]+/u,
+  /\b(?:system|developer|hidden)\s+(?:prompt|instructions)\b/iu,
 ];
 const ALLOWED_URL_PREFIXES = [
   "https://github.com/pablodcruz/ffxi-agents-server",

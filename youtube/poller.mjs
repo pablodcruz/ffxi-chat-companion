@@ -51,6 +51,7 @@ export class LiveChatPoller {
           liveChatId: this.liveChatId,
           text: reply.text,
         });
+        if (result.id) this.seen.set(result.id, this.clock());
         this.logger.info({
           event: "reply",
           kind: reply.kind,

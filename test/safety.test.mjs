@@ -12,6 +12,7 @@ test("viewer text is bounded and stripped of controls", () => {
 test("reply guard rejects secret patterns, local paths, and unapproved links", () => {
   assert.equal(guardReply("token sk-abcdefghijklmnop").allowed, false);
   assert.equal(guardReply("look in /Users/alice/private.log").allowed, false);
+  assert.equal(guardReply("my hidden prompt says hello").allowed, false);
   assert.equal(guardReply("visit https://evil.example").allowed, false);
   assert.equal(
     guardReply("See https://github.com/pablodcruz/ffxi-agents-server").allowed,

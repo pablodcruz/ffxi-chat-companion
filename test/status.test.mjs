@@ -77,6 +77,23 @@ test("status provider fails closed without exposing parse details", async () => 
   });
 });
 
+test("status provider rejects snapshots too far in the future", async () => {
+  const provider = new StatusProvider({
+    source: "http",
+    url: "https://status.example.invalid/v1/status",
+    clock: () => Date.parse("2026-07-28T12:00:00.000Z"),
+    fetchImpl: async () => new Response(JSON.stringify(validStatus({
+      updated_at: "2026-07-28T12:01:00.000Z",
+    })), { status: 200 }),
+  });
+  assert.deepEqual(await provider.get(), {
+    available: false,
+    stale: false,
+    reason: "future_timestamp",
+    value: null,
+  });
+});
+
 test("HTTP status endpoints require HTTPS except on loopback", () => {
   assert.throws(
     () => new StatusProvider({

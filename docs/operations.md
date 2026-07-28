@@ -29,6 +29,9 @@ unseen text messages are routed.
 
 The client follows `pollingIntervalMillis` returned by YouTube. It does not
 retry in a tight loop. A reported offline timestamp ends the process cleanly.
+Transient polling failures use bounded exponential backoff. IDs returned by
+successful chat inserts are marked seen as a second defense against self-reply
+loops.
 
 ## Rollout gates
 

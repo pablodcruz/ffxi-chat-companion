@@ -9,7 +9,9 @@ function unavailable(reason) {
 }
 
 function assessFreshness(value, maxAgeMs, nowMs) {
-  const ageMs = Math.max(0, nowMs - Date.parse(value.updated_at));
+  const updatedAtMs = Date.parse(value.updated_at);
+  if (updatedAtMs > nowMs + 30_000) return unavailable("future_timestamp");
+  const ageMs = Math.max(0, nowMs - updatedAtMs);
   return Object.freeze({
     available: true,
     stale: ageMs > maxAgeMs,

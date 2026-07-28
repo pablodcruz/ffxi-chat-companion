@@ -35,7 +35,7 @@ The companion deployment must not share:
 | Stale or fabricated state | Strict timestamp freshness; unavailable/stale commands refuse to guess |
 | Chat spam | 30-60 second viewer cooldown, global reply cap, three-AI-reply cap, duplicate suppression |
 | Restart reply storm | Initial YouTube history is marked seen without routing |
-| Self-reply loop | Live mode requires and ignores the bot's channel ID |
+| Self-reply loop | Live mode requires the bot's channel ID; IDs returned for sent messages are also marked seen |
 | Private-field creep | Status parser rejects every unexpected field |
 | Viewer tracking | No viewer names in AI requests or logs; channel IDs are salted and hashed for AI safety identifiers |
 | Cost abuse | Mention-only AI, global cap, short outputs, provider budget recommendation |

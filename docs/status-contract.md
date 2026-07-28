@@ -39,7 +39,9 @@ Constraints:
 - The entire document is at most 16 KiB.
 
 Snapshots older than `STATUS_MAX_AGE_SECONDS` are treated as stale and are not
-reported as current state.
+reported as current state. Snapshots more than 30 seconds in the future are
+rejected to prevent a bad producer clock or forged timestamp from bypassing
+freshness checks.
 
 ## Producer requirements
 

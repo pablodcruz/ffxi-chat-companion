@@ -26,6 +26,17 @@ test("poller drops startup history and handles only later unseen messages", asyn
       pollingIntervalMillis: 1_000,
       offlineAt: null,
     },
+    {
+      messages: [{
+        id: "bot-sent",
+        authorChannelId: "incorrectly-configured-bot-channel",
+        text: "@Kupobot try !help",
+        publishedAt: "2026-07-28T12:00:02Z",
+      }],
+      nextPageToken: "page-4",
+      pollingIntervalMillis: 1_000,
+      offlineAt: null,
+    },
   ];
   const posted = [];
   const routed = [];
@@ -36,7 +47,7 @@ test("poller drops startup history and handles only later unseen messages", asyn
       async listMessages() { return pages.shift(); },
       async postMessage(message) {
         posted.push(message);
-        return { dryRun: true };
+        return { dryRun: false, id: "bot-sent" };
       },
     },
     router: {
@@ -47,6 +58,7 @@ test("poller drops startup history and handles only later unseen messages", asyn
     },
     logger: { info() {}, error() {} },
   });
+  await poller.pollOnce();
   await poller.pollOnce();
   await poller.pollOnce();
   assert.deepEqual(routed, ["new"]);
