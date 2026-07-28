@@ -18,4 +18,5 @@ jobs:
           node-version: 22
       - run: npm test
       - run: npm run check
+      - run: npm run status:validate -- runtime/status-v1.example.json
       - run: docker build -t ffxi-chat-companion:test .

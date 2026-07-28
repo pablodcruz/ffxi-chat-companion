@@ -8,6 +8,7 @@ Run:
 npm test
 npm run check
 npm run demo
+npm run status:validate -- runtime/status-v1.example.json
 ```
 
 Confirm that:
@@ -19,6 +20,10 @@ Confirm that:
 - YouTube slow mode and channel moderation controls are configured;
 - no game-agent secrets or directories are mounted; and
 - the OpenAI project has an explicit budget before AI is enabled.
+
+Run a single replica. The v1 cooldown and duplicate-suppression state is local
+to one process; horizontal replicas require a shared limiter before they are
+safe.
 
 ## Startup behavior
 

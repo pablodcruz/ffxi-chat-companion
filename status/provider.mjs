@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parsePublicStatus } from "./schema.mjs";
 
-const MAX_STATUS_BYTES = 16 * 1024;
+export const MAX_STATUS_BYTES = 16 * 1024;
 
 function unavailable(reason) {
   return Object.freeze({ available: false, stale: false, reason, value: null });
@@ -32,7 +32,7 @@ function validateStatusUrl(rawUrl) {
   return url;
 }
 
-async function parseBody(text) {
+export function parseStatusDocument(text) {
   if (Buffer.byteLength(text, "utf8") > MAX_STATUS_BYTES) {
     throw new Error("Status document exceeds 16 KiB.");
   }
@@ -75,7 +75,7 @@ export class StatusProvider {
   async #fromFile() {
     const resolved = path.resolve(this.cwd, this.file);
     const text = await readFile(resolved, { encoding: "utf8" });
-    return parseBody(text);
+    return parseStatusDocument(text);
   }
 
   async #fromHttp() {
@@ -88,7 +88,7 @@ export class StatusProvider {
       signal: AbortSignal.timeout(5_000),
     });
     if (!response.ok) throw new Error("Status endpoint unavailable.");
-    return parseBody(await response.text());
+    return parseStatusDocument(await response.text());
   }
 }
 

@@ -64,10 +64,15 @@ The offline demo needs no credentials and never uses the network:
 npm run demo
 npm test
 npm run check
+npm run status:validate -- runtime/status-v1.example.json
 ```
 
 The demo uses fixed sanitized status and keeps AI disabled. It demonstrates
 all commands plus the safe “AI offline” fallback.
+
+`status:validate` checks a prospective producer snapshot against the exact
+strict schema and 16 KiB document limit without printing its file path or
+field values.
 
 ## Configuration
 
@@ -181,3 +186,7 @@ Use this order:
 
 Keep YouTube slow mode, blocked words, and held-message review as the primary
 moderation layer. This service deliberately does not take moderation actions.
+
+Run exactly one companion replica in v1. Cooldown and duplicate-suppression
+state is intentionally in memory; multiple replicas would each enforce a
+separate limit and could produce duplicate replies.
