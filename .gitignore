@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+node_modules/
+runtime/
+*.log
+client_secret*.json
+credentials*.json
+token*.json

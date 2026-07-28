@@ -1,0 +1,17 @@
+{
+  "name": "ffxi-chat-companion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A read-only, rate-limited YouTube Live chat companion for the FFXI Agent Lab stream.",
+  "scripts": {
+    "start": "node app/main.mjs",
+    "demo": "node scripts/demo.mjs",
+    "check": "node --check app/main.mjs",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

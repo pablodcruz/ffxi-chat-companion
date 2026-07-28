@@ -1,0 +1,9 @@
+.git
+.github
+.env
+.env.*
+coverage
+node_modules
+runtime/*
+!runtime/status-v1.example.json
+*.log
