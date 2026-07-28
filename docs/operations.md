@@ -41,7 +41,7 @@ loops.
 ## Rollout gates
 
 1. Offline demo and tests pass.
-2. OAuth reading works in dry-run mode.
+2. `npm run youtube:doctor` confirms OAuth reading in dry-run mode.
 3. Planned replies in sanitized logs match expectations.
 4. Deterministic commands work with live posting.
 5. The status snapshot is fresh and contains no private fields.

@@ -8,6 +8,7 @@
     "start": "node app/main.mjs",
     "demo": "node scripts/demo.mjs",
     "status:validate": "node scripts/validate-status.mjs",
+    "youtube:doctor": "node scripts/youtube-doctor.mjs",
     "check": "node --check app/main.mjs",
     "test": "node --test",
     "test:coverage": "node --test --experimental-test-coverage"

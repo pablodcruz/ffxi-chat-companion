@@ -95,6 +95,16 @@ GLOBAL_REPLIES_PER_MINUTE=10
 be configured together. Set `YOUTUBE_LIVE_CHAT_ID` to a known active chat or
 let the service discover the authenticated channel's active broadcast.
 
+After injecting OAuth credentials, verify the read path without posting:
+
+```sh
+npm run youtube:doctor
+```
+
+The doctor refreshes OAuth, discovers or uses the configured chat, and reads
+one message page. Its output contains only booleans, counts, and YouTube's
+polling interval—never chat IDs, page tokens, message text, or viewer IDs.
+
 When live posting is enabled, `YOUTUBE_BOT_CHANNEL_ID` is required so the
 service can ignore its own messages. Generate `SAFETY_HASH_SALT` with at least
 32 random characters; it hashes viewer channel IDs before they are sent as
@@ -179,7 +189,8 @@ Use this order:
 
 1. Run unit tests and the offline demo.
 2. Configure YouTube OAuth with `DRY_RUN=true` and AI disabled.
-3. Observe command routing without live posting.
+3. Run `npm run youtube:doctor`, then observe command routing without live
+   posting.
 4. Enable live posting for deterministic commands.
 5. Set a small OpenAI project budget and enable mention Q&A.
 6. Add the one-way status producer after its output passes the contract tests.
