@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-07-28T12:00:00.000Z",
+  "zone": {
+    "id": 107,
+    "name": "South Gustaberg"
+  },
+  "objective": "Safely explore and gain experience",
+  "job": {
+    "name": "Monk",
+    "level": 3
+  },
+  "health_status": "healthy",
+  "recent_action": "observing nearby targets",
+  "reason": "looking for an isolated easy-prey target"
+}

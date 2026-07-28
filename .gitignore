@@ -4,7 +4,8 @@
 !.env.example
 coverage/
 node_modules/
-runtime/
+runtime/*
+!runtime/status-v1.example.json
 *.log
 client_secret*.json
 credentials*.json
