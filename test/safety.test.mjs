@@ -55,3 +55,13 @@ test("privacy-preserving viewer IDs are stable and do not expose channel IDs", (
   assert.doesNotMatch(first, /channel-secret/u);
   assert.match(first, /^viewer_[a-f0-9]{32}$/u);
 });
+
+test("character caps preserve complete viewer and reply graphemes", () => {
+  assert.equal(sanitizeViewerText("abc🚀 next", 4), "abc");
+  assert.equal(sanitizeViewerText("ab e\u0301 next", 4), "ab ");
+  assert.equal(sanitizeViewerText("abc🚀 next", 5), "abc🚀");
+  assert.equal(guardReply("abc🚀 next", 5).text, "abc…");
+  assert.equal(guardReply("abc👍🏽 next", 6).text, "abc…");
+  assert.equal(guardReply("abc🚀 next", 6).text, "abc🚀…");
+  assert.equal(guardReply("a. Another sentence. And more.", 25).text, "a. Another sentence.…");
+});

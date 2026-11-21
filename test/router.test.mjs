@@ -124,3 +124,27 @@ test("status commands fail honestly when the feed is unavailable", async () => {
   assert.match(response.text, /unavailable/u);
   assert.match(response.text, /without guessing/u);
 });
+
+test("viewer mentions do not forward partial characters at the text limit", async () => {
+  const subject = router({
+    maxInputChars: 15,
+    answerer: {
+      async answer({ question }) {
+        assert.equal(question, "hello");
+        return "That looks good, kupo!";
+      },
+    },
+  });
+  const reply = await subject.route({ authorChannelId: "synthetic-viewer", text: "@Kupobot hello🚀" });
+  assert.equal(reply.text, "That looks good, kupo!");
+});
+
+test("live-chat replies do not emit replacement glyphs at the text limit", async () => {
+  const subject = router({
+    maxReplyChars: 6,
+    answerer: { async answer() { return "yes 👍🏽!"; } },
+  });
+  const reply = await subject.route({ authorChannelId: "synthetic-viewer", text: "@Kupobot hello" });
+  assert.equal(reply.text, "yes…");
+  assert.equal(reply.text, Buffer.from(reply.text).toString("utf8"));
+});
