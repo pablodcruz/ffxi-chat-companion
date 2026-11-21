@@ -13,18 +13,28 @@ const ALLOWED_URL_PREFIXES = [
   "https://github.com/pablodcruz/ffxi-chat-companion",
 ];
 
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+function clipCompleteCharacters(text, maxChars) {
+  if (text.length <= maxChars) return text;
+  for (const { index, segment } of graphemes.segment(text)) {
+    if (index + segment.length > maxChars) return text.slice(0, index);
+  }
+  return text;
+}
+
 export function sanitizeViewerText(text, maxChars = 500) {
   if (typeof text !== "string") return "";
-  return text
+  const normalized = text
     .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/gu, "")
     .replace(/\s+/gu, " ")
-    .trim()
-    .slice(0, maxChars);
+    .trim();
+  return clipCompleteCharacters(normalized, maxChars);
 }
 
 function truncateAtBoundary(text, maxChars) {
   if (text.length <= maxChars) return text;
-  const clipped = text.slice(0, Math.max(1, maxChars - 1));
+  const clipped = clipCompleteCharacters(text, Math.max(0, maxChars - 1));
   const boundary = Math.max(
     clipped.lastIndexOf(". "),
     clipped.lastIndexOf("! "),
