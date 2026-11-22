@@ -20,8 +20,8 @@ const statusProvider = new StaticStatusProvider({
     reason: "the target passed the bounded safety checks",
   },
 });
+// Use fixture defaults, not the live service configuration.
 const config = loadConfig({
-  ...process.env,
   DRY_RUN: "true",
   AI_ENABLED: "false",
   STATUS_SOURCE: "none",
@@ -33,6 +33,7 @@ for (const [index, text] of [
   "!status",
   "!zone",
   "!why",
+  "!project",
   "@Kupobot How does reactive combat work?",
 ].entries()) {
   const reply = await router.route({
