@@ -1,0 +1,39 @@
+name: Campfire browser check
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/campfire-browser.yml'
+      - 'scripts/demo.mjs'
+      - 'scripts/transcript.mjs'
+      - 'test/campfire-browser.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: campfire-browser-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    name: Offline Campfire keyboard and layout
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned browser test tooling
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps --only-shell chromium
+      - name: Check the generated offline transcript
+        run: python -u test/campfire-browser.py
