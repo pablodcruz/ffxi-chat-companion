@@ -28,6 +28,7 @@ export function renderTranscript(messages) {
   .controls[hidden]{display:none}
   button{min-height:44px;padding:7px 12px;color:var(--ink);background:#242e27;border:1px solid #889489;border-radius:4px;font:inherit;font-weight:700}
   button:not(:disabled){cursor:pointer} button:first-child:not(:disabled){color:#1f231c;background:var(--ember);border-color:var(--ember)}
+  button[aria-pressed="true"]{color:var(--mint);border-color:var(--mint);background:#1b3326}
   button:disabled{color:#b6b8af;border-color:#59645c} button:focus-visible,.tape:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
   .meta{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;padding:4px 0 12px;color:var(--muted)}
   #state{color:var(--mint);font-weight:700}
@@ -53,6 +54,7 @@ export function renderTranscript(messages) {
     <button id="next" type="button">Next message</button>
     <button id="play" type="button">Play chat</button>
     <button id="restart" type="button">Restart</button>
+    <button id="follow" type="button" aria-pressed="true" aria-controls="tape">Follow new messages</button>
   </div>
   <p class="meta"><span id="state" role="status">Recorded example</span><span id="progress"></span></p>
   <p class="sr-only" id="announcement" aria-live="polite"></p>
@@ -67,10 +69,21 @@ export function renderTranscript(messages) {
   const next=document.getElementById("next");
   const play=document.getElementById("play");
   const restart=document.getElementById("restart");
+  const follow=document.getElementById("follow");
   const state=document.getElementById("state");
   const progress=document.getElementById("progress");
   const announcement=document.getElementById("announcement");
-  let shown=0, mode="Ready", timer=null;
+  let shown=0, mode="Ready", timer=null, following=true;
+
+  function followLatest() {
+    tape.scrollTop=tape.scrollHeight;
+  }
+
+  follow.addEventListener("click",() => {
+    following=!following;
+    follow.setAttribute("aria-pressed",String(following));
+    if (following) followLatest();
+  });
 
   function update() {
     if (state.textContent!==mode) state.textContent=mode;
@@ -93,7 +106,7 @@ export function renderTranscript(messages) {
     line.hidden=false;
     announcement.textContent=line.querySelector(".speaker strong").textContent
       +": "+line.querySelector(".message").textContent;
-    tape.scrollTop=tape.scrollHeight;
+    if (following) followLatest();
     if (shown>=lines.length) {
       const focusOnPlayback=[play,next].includes(document.activeElement);
       halt("End of tape");
@@ -122,6 +135,7 @@ export function renderTranscript(messages) {
   function rewind(label) {
     for (const line of lines) line.hidden=true;
     shown=0;
+    tape.scrollTop=0;
     halt(label);
     reveal();
   }

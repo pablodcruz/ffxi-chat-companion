@@ -78,8 +78,10 @@ node scripts/demo.mjs --html > /tmp/campfire-transcript.html
 
 Viewer and Kupobot lines are labeled. Use **Next message** to step,
 **Play chat** to play, **Escape** to pause, and **Restart** to rewind. Playback
-starts only on request. The HTML does not start the companion, read live chat,
-or make network requests.
+starts only on request. Turn off **Follow new messages** to read earlier lines
+while playback continues; turn it back on to jump to the latest message.
+Restart rewinds the tape without changing that preference. The HTML does not
+start the companion, read live chat, or make network requests.
 
 `status:validate` checks a prospective producer snapshot against the exact
 strict schema and 16 KiB document limit without printing its file path or
