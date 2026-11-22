@@ -1,0 +1,7 @@
+# Campfire playback
+
+Generate the existing synthetic Campfire page through the [skill](../SKILL.md), which records the HTML alongside the plain output and verifies parity for all six exchanges. This proves generated fixture content, not playback in a browser.
+
+When a supported Chromium and Python Playwright are already available, run the repository's `python -u test/campfire-browser.py` from the exact archived checkout (optionally pass `--chromium /path/to/chromium`). This generates and opens a local temporary file, blocks outbound requests, and cleans the temporary fixture. For new browser evidence, record the tested commit/tree, browser version if available, exit status, stdout and stderr outside scratch. No browser prerequisites are required for the core shell rehearsal. If Chromium cannot start, report playback as not rerun; do not substitute a live service.
+
+The existing [PR-only browser run](https://github.com/pablodcruz/ffxi-chat-companion/actions/runs/44984030398) tested prospective merge `f006257702e9cee06777b3743662219299f275e3` (head `e6c199fbf87e203b5bf0d3d44fa0cc60492ca587`), whose product tree was merged as `f66561e02a4d7146fec38b91ac4acc5be393d053` (tree `ecbdc05ed2d3907ef5bd54b281b456c41383f54d`). It passed keyboard playback, no-JavaScript fallback, and no outbound requests at 320, 390, and 1440 px; a deliberately broken Escape binding failed the check. This evidence applies to that tree, not to later product changes. It does not verify a deployed bot, YouTube, or AI.
