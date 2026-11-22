@@ -3,8 +3,9 @@
 import { buildRouter } from "../app/build.mjs";
 import { loadConfig } from "../config.mjs";
 import { StaticStatusProvider } from "../status/provider.mjs";
+import { renderTranscript } from "./transcript.mjs";
 
-const now = new Date().toISOString();
+const now = "2026-07-28T12:00:00.000Z";
 const statusProvider = new StaticStatusProvider({
   available: true,
   stale: false,
@@ -27,6 +28,7 @@ const config = loadConfig({
   STATUS_SOURCE: "none",
 });
 const router = await buildRouter(config, { statusProvider });
+const messages = [];
 
 for (const [index, text] of [
   "!help",
@@ -42,6 +44,16 @@ for (const [index, text] of [
     text,
     publishedAt: now,
   });
-  console.log(`viewer> ${text}`);
-  console.log(`bot> ${reply?.text || "(no reply)"}`);
+  messages.push(
+    { speaker: "Viewer", text },
+    { speaker: "Kupobot", text: reply?.text || "(no reply)" },
+  );
+}
+
+if (process.argv.includes("--html")) {
+  console.log(renderTranscript(messages));
+} else {
+  for (const { speaker, text } of messages) {
+    console.log(`${speaker === "Viewer" ? "viewer" : "bot"}> ${text}`);
+  }
 }

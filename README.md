@@ -68,7 +68,18 @@ npm run status:validate -- runtime/status-v1.example.json
 ```
 
 The demo uses fixed sanitized status and keeps AI disabled. It demonstrates
-all commands plus the safe “AI offline” fallback.
+all commands plus the safe “AI offline” fallback. For a keyboard-operable,
+read-only Campfire Transcript, generate an offline HTML copy and open it in
+your browser:
+
+```sh
+node scripts/demo.mjs --html > /tmp/campfire-transcript.html
+```
+
+Viewer and Kupobot lines are labeled. Use **Next message** to step,
+**Play chat** to play, **Escape** to pause, and **Restart** to rewind. Playback
+starts only on request. The HTML does not start the companion, read live chat,
+or make network requests.
 
 `status:validate` checks a prospective producer snapshot against the exact
 strict schema and 16 KiB document limit without printing its file path or
