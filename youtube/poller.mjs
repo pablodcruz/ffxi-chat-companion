@@ -1,11 +1,14 @@
-function sleep(delayMs, signal) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(resolve, delayMs);
-    signal?.addEventListener("abort", () => {
-      clearTimeout(timer);
-      reject(signal.reason || new Error("Polling aborted."));
-    }, { once: true });
-  });
+import { setTimeout as wait } from "node:timers/promises";
+
+async function sleep(delayMs, signal) {
+  try {
+    // The Node timer unregisters its abort listener when it settles.
+    await wait(delayMs, undefined, { signal });
+  } catch (error) {
+    // Keep the caller's shutdown reason instead of the timer's wrapper.
+    signal?.throwIfAborted();
+    throw error;
+  }
 }
 
 export class LiveChatPoller {
