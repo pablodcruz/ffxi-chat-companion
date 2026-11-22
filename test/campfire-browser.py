@@ -88,6 +88,62 @@ def verify_keyboard(browser, fixture, width):
         context.close()
 
 
+def verify_follow(browser, fixture, width):
+    context, page, attempted = local_page(browser, fixture, width)
+    try:
+        visible = page.locator("#tape li:visible")
+        next_message = page.get_by_role("button", name="Next message")
+        play = page.get_by_role("button", name="Play chat")
+        follow = page.get_by_role("button", name="Follow new messages")
+        restart = page.get_by_role("button", name="Restart")
+        tape = page.locator("#tape")
+        state = page.locator("#state")
+        expect(follow).to_have_attribute("aria-pressed", "true")
+
+        page.keyboard.press("Tab")
+        expect(next_message).to_be_focused()
+        for _ in range(9):
+            page.keyboard.press("Enter")
+        expect(visible).to_have_count(10)
+        assert tape.evaluate("el => el.scrollTop > 0")
+        page.keyboard.press("Tab")
+        expect(play).to_be_focused()
+        page.keyboard.press("Enter")
+        expect(state).to_have_text("Playing")
+        page.keyboard.press("Tab")
+        expect(restart).to_be_focused()
+        page.keyboard.press("Tab")
+        expect(follow).to_be_focused()
+        page.keyboard.press("Space")
+        expect(follow).to_have_attribute("aria-pressed", "false")
+        expect(state).to_have_text("Playing")
+        tape.evaluate("el => { el.scrollTop = 0; }")
+        page.clock.run_for(900)
+        expect(visible).to_have_count(11)
+        assert tape.evaluate("el => el.scrollTop") == 0, "New message moved the reading position"
+        expect(follow).to_be_focused()
+        page.keyboard.press("Escape")
+        expect(state).to_have_text("Paused")
+        page.clock.run_for(1800)
+        expect(visible).to_have_count(11)
+
+        page.keyboard.press("Space")
+        expect(follow).to_have_attribute("aria-pressed", "true")
+        expect(state).to_have_text("Paused")
+        assert tape.evaluate("el => Math.abs(el.scrollTop - (el.scrollHeight - el.clientHeight)) <= 1")
+        page.keyboard.press("Space")
+        page.keyboard.press("Shift+Tab")
+        expect(restart).to_be_focused()
+        page.keyboard.press("Enter")
+        expect(visible).to_have_count(1)
+        expect(state).to_have_text("Rewound")
+        expect(follow).to_have_attribute("aria-pressed", "false")
+        assert tape.evaluate("el => el.scrollTop") == 0
+        assert_no_network(fixture, attempted)
+    finally:
+        context.close()
+
+
 def verify_static(browser, fixture, width):
     context, page, attempted = local_page(browser, fixture, width, javascript_enabled=False)
     try:
@@ -114,7 +170,8 @@ def main():
             for width in WIDTHS:
                 verify_keyboard(browser, fixture, width)
                 verify_static(browser, fixture, width)
-                print(f"PASS: {width}px keyboard playback, no-JS fallback, no outbound requests")
+                verify_follow(browser, fixture, width)
+                print(f"PASS: {width}px keyboard playback and scroll follow, no-JS fallback, no outbound requests")
             source = fixture.read_text(encoding="utf-8")
             target = 'event.key==="Escape"'
             assert source.count(target) == 1, "Escape red-control selector drifted"

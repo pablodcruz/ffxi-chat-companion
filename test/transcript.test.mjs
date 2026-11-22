@@ -19,10 +19,12 @@ test("the inline playback controller steps, pauses via Escape, and returns focus
     },
   }));
   const document = { activeElement: null };
-  const nodes = Object.fromEntries(["tape", "next", "play", "restart", "state", "progress",
+  const nodes = Object.fromEntries(["tape", "next", "play", "restart", "follow", "state", "progress",
     "announcement", "controls", "document"].map((key) => [key, {
     hidden: key === "controls",
     handlers: new Map(),
+    attributes: new Map(),
+    setAttribute(name, value) { this.attributes.set(name, value); },
     addEventListener(type, handler) { this.handlers.set(type, handler); },
     focus() { document.activeElement = this; },
   }]));
@@ -31,6 +33,7 @@ test("the inline playback controller steps, pauses via Escape, and returns focus
     addEventListener: (...args) => nodes.document.addEventListener(...args),
   });
   nodes.tape.querySelectorAll = () => lines;
+  nodes.tape.scrollHeight = 480;
   let count = 0;
   const timers = new Map();
   function tick() {
@@ -45,10 +48,15 @@ test("the inline playback controller steps, pauses via Escape, and returns focus
   assert.equal(nodes.controls.hidden, false);
   assert.equal(nodes.state.textContent, "Ready");
   assert.deepEqual(lines.map((line) => line.hidden), [false, true, true]);
+  assert.equal(nodes.tape.scrollTop, 480);
+  nodes.follow.handlers.get("click")();
+  assert.equal(nodes.follow.attributes.get("aria-pressed"), "false");
+  nodes.tape.scrollTop = 65;
   nodes.play.focus();
   nodes.play.handlers.get("click")();
   assert.equal(nodes.next.disabled, true);
   tick();
+  assert.equal(nodes.tape.scrollTop, 65);
   assert.equal(nodes.progress.textContent, "2 / 3 messages");
   assert.equal(nodes.announcement.textContent, "Kupobot: A reply");
   let handled = false;
@@ -62,6 +70,11 @@ test("the inline playback controller steps, pauses via Escape, and returns focus
   assert.equal(document.activeElement, nodes.restart);
   nodes.restart.handlers.get("click")();
   assert.equal(nodes.progress.textContent, "1 / 3 messages");
+  assert.equal(nodes.follow.attributes.get("aria-pressed"), "false");
+  assert.equal(nodes.tape.scrollTop, 0);
+  nodes.follow.handlers.get("click")();
+  assert.equal(nodes.follow.attributes.get("aria-pressed"), "true");
+  assert.equal(nodes.tape.scrollTop, 480);
   assert.deepEqual(lines.map((line) => line.hidden), [false, true, true]);
   assert.equal(timers.size, 0);
 });
